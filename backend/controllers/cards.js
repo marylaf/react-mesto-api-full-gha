@@ -6,6 +6,7 @@ const { OK, CreateSmt } = require('../utils/constants');
 
 const getCards = (req, res, next) => {
   Card.find(req.params)
+    .sort({ _id: -1 })
     .then((cards) => res.status(OK).send({ data: cards }))
     .catch(next);
 };

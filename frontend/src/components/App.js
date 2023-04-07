@@ -32,50 +32,68 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all([api.getProfile(), api.getInitialCards()])
-      .then((res) => {
-        setCurrentUser(res[0]);
-        setCards(res[1]);
-      })
-      .catch(console.log("Ошибка"));
-  }, []);
-
-  useEffect(() => {
     // настало время проверить токен
     tokenCheck();
   }, []);
 
+  useEffect(() => {
+    Promise.all([api.getProfile(), api.getInitialCards()])
+      .then((res) => {
+        setCurrentUser(res[0].data);
+        setCards(res[1].data);
+      })
+      .catch(console.log("Ошибка"));
+  }, [userEmail]);
+
+
   const tokenCheck = () => {
+
     const jwt = localStorage.getItem("jwt");
 
     if (jwt) {
+
+      api.setHeaders({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      });
+      apiRegister.setHeaders({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      });
+
       apiRegister
-        .getGeneral(jwt)
+        .getGeneral()
         .then((res) => {
           if (res) {
-            // if (res) {
-            //   console.log(res);
-            //   setUserEmail(res.data.email);
-            // }
             setIsLoggedIn(true);
             navigate("/", { replace: true });
             setUserEmail(res.data.email);
           }
         })
-        .catch(() => console.log("Ошибка"));
+        .catch((e) => console.log("Ошибка", e));
     }
   };
 
   function handleLogin(email, password) {
     apiRegister
       .login(email, password)
-      .then((data) => {
-        localStorage.setItem("jwt", data.token);
-        setUserEmail(email);
+      .then((res) => {
+        localStorage.setItem("jwt", res.token);
+
+        api.setHeaders({
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${res.token}`,
+        });
+        apiRegister.setHeaders({
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${res.token}`,
+        });
+
         setIsLoggedIn(true);
+        setUserEmail(email);
         navigate("/", { replace: true });
       })
-      .catch(() => console.log("Ошибка"));
+      .catch((e) => console.log("Ошибка", e))
   }
 
   function handleRegister(email, password) {
@@ -120,7 +138,10 @@ function App() {
   function handleSignOut() {
     localStorage.removeItem("jwt");
     setIsLoggedIn(false);
+    setCurrentUser(null);
+    setCards([]);
     navigate("/sign-in", { replace: true });
+
   }
 
   function deleteCardClick(card) {
@@ -133,17 +154,20 @@ function App() {
       .catch(console.log("Ошибка"));
   }
 
-  function handleCardLike(card) {
-    const isLiked = card.likes.some((like) => like._id === currentUser._id);
+  function handleCardLike(updatedCard) {
+    const isLiked = updatedCard.likes.some((like) => like === currentUser._id);
     api
-      .changeLikeStatus(card._id, isLiked)
-      .then((newCard) => {
-        setCards((state) =>
-          state.map((like) => (like._id === card._id ? newCard : like))
+      .changeLikeStatus(updatedCard._id, isLiked)
+      .then((res) => {
+        setCards((state) => {
+      return state.map((card) => 
+            (card._id === updatedCard._id ? res.data : card))
+        }
         );
       })
       .catch(console.log("Ошибка"));
   }
+
 
   function closeAllPopups() {
     setIsEditProfilePopupOpen(false);
@@ -157,7 +181,7 @@ function App() {
   function handleUpdateUser(data) {
     api
       .editProfile(data.name, data.about)
-      .then((userData) => setCurrentUser(userData))
+      .then((userData) => setCurrentUser(userData.data))
       .then(() => closeAllPopups())
       .catch(console.log("Ошибка"));
   }
@@ -165,7 +189,7 @@ function App() {
   function handleUpdateAvatar(data) {
     api
       .addNewAvatar(data.avatar)
-      .then((userData) => setCurrentUser(userData))
+      .then((userData) => setCurrentUser(userData.data))
       .then(() => closeAllPopups())
       .catch(console.log("Ошибка"));
   }
@@ -173,7 +197,9 @@ function App() {
   function handleUpdateCards(data) {
     api
       .addNewCard(data.name, data.link)
-      .then((newCard) => setCards([newCard, ...cards]))
+      .then((newCard) => {
+        setCards([newCard.data, ...cards])
+      })
       .then(() => closeAllPopups())
       .catch(console.log("Ошибка"));
   }

@@ -11,6 +11,7 @@ class Api {
   }
 
   getProfile() {
+    // console.log("this._headers", this._headers);
     return fetch(`${this._baseUrl}/users/me`, {
       headers: this._headers,
     }).then(this._getResponseData);
@@ -73,6 +74,10 @@ class Api {
     return !isLiked ? this.addLike(id) : this.deleteLike(id);
   }
 
+  setHeaders(headers) {
+    this._headers = headers;
+  }
+
   _getResponseData(res) {
     if (!res.ok) {
       return Promise.reject(`Ошибка: ${res.status}`);
@@ -82,9 +87,5 @@ class Api {
 }
 
 export const api = new Api({
-  baseUrl: "https://mesto.nomoreparties.co/v1/cohort-55",
-  headers: {
-    authorization: "7be2f97c-84ef-4652-a179-1ed7677c4124",
-    "Content-Type": "application/json",
-  },
+  baseUrl: "http://localhost:3000",
 });

@@ -46,19 +46,20 @@ function Main({
       </section>
       <section className="elements">
         <div className="elements__container">
-          {cards.map((card) => (
-            <Card
-              card={card}
-              title={card.name}
-              image={card.link}
-              key={card._id}
-              id={currentUser._id}
-              onCardClick={onCardClick}
-              onDeleteClick={onDeleteClick}
-              onCardLike={onCardLike}
-              likesCount={card.likes.length}
-            />
-          ))}
+          {cards.map((card) => 
+            { 
+              return (<Card
+                card={card}
+                title={card.name}
+                image={card.link}
+                key={card._id}
+                id={currentUser._id}
+                onCardClick={onCardClick}
+                onDeleteClick={onDeleteClick}
+                onCardLike={onCardLike}
+                likesCount={card.likes.length}
+              />)}
+          )}
         </div>
       </section>
     </main>
