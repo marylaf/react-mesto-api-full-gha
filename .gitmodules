@@ -1,0 +1,6 @@
+[submodule "express-mesto-gha"]
+	path = express-mesto-gha
+	url = https://github.com/marylaf/express-mesto-gha.git
+[submodule "react-mesto-auth"]
+	path = react-mesto-auth
+	url = https://github.com/marylaf/react-mesto-auth.git
