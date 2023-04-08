@@ -22,7 +22,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.use(requestLogger);
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: 'http://localhost:3001' }));
+app.use(cors());
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
