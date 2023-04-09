@@ -138,8 +138,6 @@ function App() {
   function handleSignOut() {
     localStorage.removeItem("jwt");
     setIsLoggedIn(false);
-    setCurrentUser(null);
-    setCards([]);
     navigate("/sign-in", { replace: true });
 
   }

@@ -87,5 +87,5 @@ class Api {
 }
 
 export const api = new Api({
-  baseUrl: "http://api.mary.student.nomoredomains.monster",
+  baseUrl: "http://localhost:3000",
 });
