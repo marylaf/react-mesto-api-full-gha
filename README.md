@@ -6,8 +6,9 @@
 
 ## Ссылки на проект
 
-IP-адрес x.x.x.x
+IP-адрес 51.250.8.210
 
-Frontend https://...
+Frontend https://mary.student.nomoredomains.monster/
 
-Backend https://...
+Backend https://api.mary.student.nomoredomains.monster/
+
