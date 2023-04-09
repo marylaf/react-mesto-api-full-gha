@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+
+const { JWT_SECRET, NODE_ENV } = process.env;
 const BadRequest = require('../errors/bad-request-err');
 const NotFound = require('../errors/not-found-err');
 const ConflictError = require('../errors/conflict-err');
@@ -10,8 +12,25 @@ const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(OK).send(users))
     .catch((err) => {
-      console.log('ERR', err, req.body);
       next(err);
+    });
+};
+
+const getUserById = (req, res, next) => {
+  User.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        const error = new NotFound('Такого пользователя не существует');
+        return next(error);
+      }
+      return res.status(OK).send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        const error = new BadRequest('Некорректный запрос');
+        return next(error);
+      }
+      return next(err);
     });
 };
 
@@ -119,11 +138,7 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('jwt', {
-        httpOnly: true,
-        maxAge: 3600000 * 24 * 7,
-      });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key', { expiresIn: '7d' });
       return res.status(OK).send({ data: user, token });
     })
     .catch(next);
@@ -136,4 +151,5 @@ module.exports = {
   updateProfile,
   login,
   getCurrentUser,
+  getUserById,
 };

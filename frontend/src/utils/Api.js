@@ -11,7 +11,6 @@ class Api {
   }
 
   getProfile() {
-    // console.log("this._headers", this._headers);
     return fetch(`${this._baseUrl}/users/me`, {
       headers: this._headers,
     }).then(this._getResponseData);
@@ -87,5 +86,5 @@ class Api {
 }
 
 export const api = new Api({
-  baseUrl: "http://api.mary.student.nomoredomains.monster",
+  baseUrl: "http://localhost:3000",
 });

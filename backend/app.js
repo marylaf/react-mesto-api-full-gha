@@ -1,9 +1,12 @@
+const dotenv = require('dotenv');
+
+dotenv.config();
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const { celebrate, Joi } = require('celebrate');
-const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const validateURL = require('./middlewares/validation');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
 const { createUser } = require('./controllers/users');
@@ -21,7 +24,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 
 app.use(requestLogger);
 app.use(express.json());
-app.use(cookieParser());
 app.use(cors());
 
 app.get('/crash-test', () => {
@@ -30,36 +32,36 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signin', celebrate({
+app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().uri(),
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-
-  }),
-}), login);
-
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
+    avatar: Joi.string().custom(validateURL),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
 
   }),
 }), createUser);
 
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+
+  }),
+}), login);
+
 app.use('/', auth, userRouter);
 app.use('/', auth, cardRouter);
 
 const { PORT = 3000 } = process.env;
 
-app.use(errorLogger);
-app.use(auth);
 app.use((req, res, next) => {
   const error = new NotFound('Запрашиваемый ресурс не найден');
   return next(error);
 });
+app.use(errorLogger);
+app.use(auth);
 app.use(errors());
 app.use((err, req, res, next) => {
   // если у ошибки нет статуса, выставляем 500
