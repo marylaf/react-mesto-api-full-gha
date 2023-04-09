@@ -5,6 +5,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const { celebrate, Joi } = require('celebrate');
+const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const validateURL = require('./middlewares/validation');
 const userRouter = require('./routes/users');
@@ -24,6 +25,7 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
 
 app.use(requestLogger);
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors());
 
 app.get('/crash-test', () => {
