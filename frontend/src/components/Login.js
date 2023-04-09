@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Login({ handleLogin }) {
+function Login({ handleLogin, handleInfoTooltipOpen }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -52,7 +52,7 @@ function Login({ handleLogin }) {
           required
         />
         <span className="span subtitle-input-error"></span>
-        <button type="submit" className="login__button-save">
+        <button type="submit" className="login__button-save" onClick={handleInfoTooltipOpen}>
           Войти
         </button>
       </form>

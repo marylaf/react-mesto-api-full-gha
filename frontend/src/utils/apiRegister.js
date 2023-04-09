@@ -57,5 +57,5 @@ class ApiRegiser {
 }
 
 export const apiRegister = new ApiRegiser({
-  baseUrl: "http://localhost:3000",
+  baseUrl: "https://api.mary.student.nomoredomains.monster",
 });

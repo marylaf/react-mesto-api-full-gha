@@ -93,7 +93,10 @@ function App() {
         setUserEmail(email);
         navigate("/", { replace: true });
       })
-      .catch((e) => console.log("Ошибка", e))
+      .catch((e) => {
+        handleInfoTooltipOpen();
+        console.log("Ошибка", e)
+      })
   }
 
   function handleRegister(email, password) {
