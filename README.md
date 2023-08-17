@@ -8,7 +8,7 @@
 
 IP-адрес 51.250.8.210
 
-Frontend https://mary.student.nomoredomains.monster/
+Frontend mary.diplom.nomoredomains.monster
 
-Backend https://api.mary.student.nomoredomains.monster/
+Backend https://api.mary.diplom.nomoredomains.monster
 
